@@ -46,8 +46,19 @@ def extract_data(excel_file):
         data = df.iloc[start_row:]
         return data
     else:
-        print("ID-Zeile nicht gefunden!")
+        print("[!] ID-row not found")
         return None
+
+
+def print_banner():
+   print("""  ______ _____ _____                    _                        _   _             
+ |  ____/ ____|  __ \        /\        | |                      | | (_)            
+ | |__ | |    | |__) |_____ /  \  _   _| |_ ___  _ __ ___   __ _| |_ _  ___  _ __  
+ |  __|| |    |  _  /______/ /\ \| | | | __/ _ \| '_ ` _ \ / _` | __| |/ _ \| '_ \ 
+ | |   | |____| | \ \     / ____ \ |_| | || (_) | | | | | | (_| | |_| | (_) | | | |
+ |_|    \_____|_|  \_\   /_/    \_\__,_|\__\___/|_| |_| |_|\__,_|\__|_|\___/|_| |_| by DHaslauer
+ -----------------------------------------------------------------------------------------------
+                                                                            """)
     
 
 
@@ -57,7 +68,7 @@ def connect_checkpoint_api():
     Authentifizierungs-Header zurück.
     """
     # Abfrage des API-Passworts vom Benutzer
-    api_password = getpass("Bitte geben Sie das API-Passwort ein: ")
+    api_password = getpass("[*] Please enter the password for the api user: ")
 
     # Verbindung zur Check Point API herstellen
     url = f"https://{mgmt_ip}/web_api/login"
@@ -70,11 +81,11 @@ def connect_checkpoint_api():
             "Content-Type": "application/json",
             "X-chkp-sid": response.json()['sid']
         }
-        print("Erfolgreich mit der Check Point API verbunden!")
+        print("[+] Successfully connected to Checkpoint API")
         return auth_header
     else:
-        print("Fehler bei der Anmeldung zur Check Point API!")
-        print("Fehlermeldung: ", response.json()['message'])
+        print("[!] Error while authentication")
+        print("[!] Error: ", response.json()['message'])
         quit()
         return None
     
@@ -243,7 +254,8 @@ def check_objects_exist(auth_header, object_names):
             data = json.dumps(payload)
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
-            print(response_json)
+            if response.status_code != 200:
+                print(f"[!] {response_json}")
             message = f"Requested object [{object_name}] not found"
             if str(message) in str(response_json):
                 # Das Objekt existiert noch nicht
@@ -259,7 +271,7 @@ def check_objects_exist(auth_header, object_names):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{object_name}] not found"
             if str(message) in str(response_json):
                 # Das Objekt existiert noch nicht
@@ -275,7 +287,7 @@ def check_objects_exist(auth_header, object_names):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{object_name}] not found"
             if str(message) in str(response_json):
                 # Das Objekt existiert noch nicht
@@ -291,7 +303,7 @@ def check_objects_exist(auth_header, object_names):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{object_name}] not found"
             if str(message) in str(response_json):
                 # Das Objekt existiert noch nicht
@@ -307,7 +319,7 @@ def check_objects_exist(auth_header, object_names):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{object_name}] not found"
             if str(message) in str(response_json):
                 # Das Objekt existiert noch nicht
@@ -315,12 +327,12 @@ def check_objects_exist(auth_header, object_names):
 
         # Unbekannter Objekt Typ
         else:
-            print("Unknown object type...")
+            print("[!] Unknown object type...")
 
     if not_existing_objects:
-        print(f"New objects will be created: {not_existing_objects}")
+        print(f"[*] New objects will be created: {not_existing_objects}")
     else:
-        print("All objects have already been created, no additional objects will be created.")
+        print("[*] All objects have already been created, no additional objects will be created.")
     # Rückgabe der Liste der nicht existierenden Objekte
     return not_existing_objects
 
@@ -360,7 +372,7 @@ def check_services_exist(auth_header, service_objects):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{service_name}] not found"
             if str(message) in str(response_json):
                 # Der Service existiert noch nicht
@@ -376,7 +388,7 @@ def check_services_exist(auth_header, service_objects):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{service_name}] not found"
             if str(message) in str(response_json):
                 # Der Service existiert noch nicht
@@ -396,16 +408,16 @@ def check_services_exist(auth_header, service_objects):
             response = requests.post(url, data=data, headers=auth_header, verify=False)
             response_json = json.loads(response.text)
             if response.status_code != 200:
-                print(response_json)
+                print(f"[!] {response_json}")
             message = f"Requested object [{service_name}] not found"
             if str(message) in str(response_json):
                 # Der Service existiert noch nicht
                 not_existing_services.append(service_name)
 
     if not_existing_services:
-        print(f"New services will be created: {not_existing_services}")
+        print(f"[*] New services will be created: {not_existing_services}")
     else:
-        print("All services have already been created, no additional services will be created.")
+        print("[*] All services have already been created, no additional services will be created.")
     # Rückgabe der Liste der nicht existierenden Services
     return not_existing_services
 
@@ -415,11 +427,11 @@ def create_object(auth_header, name):
     name = str(name.replace("\n", ""))
     # create host object
     if name.startswith("h"): 
-        print(f"Creating host object {name} with the following parameters")
+        print(f"[*] Creating host object {name} with the following parameters")
         # Host Objekt in folgendem Format: h_{Wichtigkeit}_{IP}_{Name}
         split_string = name.split("_")
         ip_value = split_string[2]
-        print(f"The IP of the object is {ip_value}")
+        #print(f"The IP of the object is {ip_value}")
         payload = {
             "name": name,
             "ipv4-address": ip_value,
@@ -429,12 +441,12 @@ def create_object(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
 
     # create network object
     elif name.startswith("n"):
-        print(f"Creating network object {name}...")
+        print(f"[*] Creating network object {name}...")
         # Network Objekt in forlgendem Format: n_{Wichtigkeit}_{IP}_{SM}_{Name}
         split_string = name.split("_")
         ip_value = split_string[2]
@@ -454,12 +466,12 @@ def create_object(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
 
     # create group object
     elif name.startswith("g"):
-        print(f"Creating group object {name}...")
+        print(f"[*] Creating group object {name}...")
         # Network Objekt in forlgendem Format: n_{Wichtigkeit}_{Name}
         payload = {
             "name": name
@@ -468,12 +480,12 @@ def create_object(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
-        print("Die Member der neuen Gruppe müssen aktuell noch manuell angelegt werden!!!")
+        print("[!] Members of the new group object have to be added manually")
 
     elif name.startswith("adg"):
-        print(f"Creating network object {name}...")
+        print(f"[*] Creating network object {name}...")
         # Access Role Objekt in folgendem Format: adg_{x}_{x}_{x}_{Gruppenname}
         split_string = name.split("_")
         group_name = "_".join(split_string[4:])
@@ -490,11 +502,11 @@ def create_object(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
 
     elif name.startswith("VPN"):
-        print(f"Creating network object {name}...")
+        print(f"[*] Creating network object {name}...")
         # Access Role Objekt in folgendem Format: VPN_{Gruppenname}
         split_string = name.split("_")
         group_name = "_".join(split_string[1:])
@@ -511,13 +523,13 @@ def create_object(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
 
 
     #Unknown object type
     else:
-        print(f"Unknown object type: {name}")
+        print(f"[!] Unknown object type: {name}")
 
 
 def create_service(auth_header, name):
@@ -537,7 +549,7 @@ def create_service(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
     
     elif "udp" in name:
@@ -553,7 +565,7 @@ def create_service(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
     
     else:
@@ -566,7 +578,7 @@ def create_service(auth_header, name):
         response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
         response_json = json.loads(response.text)
         if response.status_code != 200:
-            print(response_json)
+            print(f"[!] {response_json}")
             discard_changes(auth_header)
 
 
@@ -576,9 +588,9 @@ def get_rule_position(section_name, auth_header):
         section_search = re.sub('\(.*?\)', '', section_name)
         section_search = section_search.rsplit(" ", 1)[0].rstrip()
         section_name = section_search
-        print(section_search)
+        print(f"[*] Section name: {section_name}")
     else:
-        print(section_name)
+        print(f"[*] Section name: {section_name}")
     layer = "Network"
     payload = {
         "name": section_name,
@@ -587,12 +599,12 @@ def get_rule_position(section_name, auth_header):
     url = f"https://{mgmt_ip}/web_api/show-access-section"
     response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
     response_json = json.loads(response.text)
-    print(response_json)
+    print(f" [*] {response_json}")
     return response_json["uid"]
 
 
 def get_section_name(section_name):
-    print(section_name)
+    print(f"[*] Searching for section: {section_name}")
     section_search = re.sub('\(.*?\)', '', section_name)
     section_search = section_search.rsplit(" ", 1)[0].rstrip()
     return section_search
@@ -603,7 +615,7 @@ def get_rule_name(section_name, section_id, auth_header):
 
 
 def get_rule_id(auth_header, rule_name):
-    print(rule_name)
+    print(f"[*] Searching for rule: {rule_name}")
     layer = "Network"
     payload = {
         "name": rule_name,
@@ -612,7 +624,7 @@ def get_rule_id(auth_header, rule_name):
     url = f"https://{mgmt_ip}/web_api/show-access-rule"
     response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
     response_json = json.loads(response.text)
-    print(response_json)
+    print(f"[*] {response_json}")
     return response_json["uid"]
 
 def get_description(auth_header, rule_uid):
@@ -624,16 +636,16 @@ def get_description(auth_header, rule_uid):
     url = f"https://{mgmt_ip}/web_api/show-access-rule"
     response = requests.post(url, data=json.dumps(payload), headers=auth_header, verify=False)
     response_json = json.loads(response.text)
-    print(response_json)
+    print(f"[*] {response_json}")
     return response_json["comments"]
 
 
 def create_change_rules(auth_header, data, session_name):
-    print(data)
+    #print(data)
     for index, row in data.iterrows():
         if str(row[0]).startswith('ID'):
             section_name = str(row[0])
-            print(f"Die neue Section heißt: {section_name}")
+            print(f"[*] Section: {section_name}")
         else:
             # read add, change, delete cell
             rule_type = str(row[5])
@@ -645,8 +657,8 @@ def create_change_rules(auth_header, data, session_name):
             if rule_type == "ADD" or rule_type == "add" or rule_type == "" or rule_type == "Add":
                 if section_name:
                     #New rule will be created
-                    print(rule_type)
-                    print("Daten aus Excel auslesen und Rule anlegen.")
+                    #print(rule_type)
+                    #print("Daten aus Excel auslesen und Rule anlegen.")
                     # Daten aus Zeile auslesen
                     section_id = get_rule_position(section_name, auth_header)
                     #get installation targets
@@ -657,7 +669,7 @@ def create_change_rules(auth_header, data, session_name):
                         install_on1 = str(install_on1.replace("\n", ""))
                         install_on1 = str(install_on1.replace(" ", ""))
                     install_on = list(filter(None, install_on))
-                    print(install_on)
+                    #print(install_on)
 
                     #get cell sources
                     sources = []
@@ -670,7 +682,7 @@ def create_change_rules(auth_header, data, session_name):
                             source1 = str(source1.replace("NaN", ""))
                             source1 = str(source1.replace("nan", ""))
                     sources = list(filter(None, sources))
-                    print(sources)
+                    #print(sources)
 
                     #get cell destinations
                     #destinations = get_destinations(data)
@@ -684,7 +696,7 @@ def create_change_rules(auth_header, data, session_name):
                             destination1 = str(destination1.replace("NaN", ""))
                             destination1 = str(destination1.replace("nan", ""))
                     destinations = list(filter(None, destinations))        
-                    print(destinations)
+                    #print(destinations)
 
                     #get services from cell
                     #services = get_service_objects(data)
@@ -695,7 +707,7 @@ def create_change_rules(auth_header, data, session_name):
                         service1 = str(service1.replace("\n", ""))
                         service1 = str(service1.replace(" ", ""))
                     services = list(filter(None, services))
-                    print(services)
+                    #print(services)
 
                     #get description from cell
                     description = str(row[16])
@@ -704,7 +716,7 @@ def create_change_rules(auth_header, data, session_name):
                     #name = get_rule_name(section_name, section_id=auth_header)
                     #print(description)
                     section = get_section_name(section_name)
-                    name = new_description = input(f"Bitte den Namen für die neue Regel in der Section {section} eingeben: ")
+                    name = new_description = input(f"Please enter the name for the new rule in section {section}: ")
                     
 
                     url = f"https://{mgmt_ip}/web_api/add-access-rule"
@@ -726,24 +738,24 @@ def create_change_rules(auth_header, data, session_name):
                     response = requests.post(url, headers=auth_header, data=json.dumps(data), verify=False)
                     # Check the response
                     if response.status_code == 200:
-                        print("Rule created successfully")
+                        print("[+] Rule created successfully")
                     else:
-                        print(f"Error creating rule: {response.status_code} {response.text}")
+                        print(f"[!] Error creating rule: {response.status_code} {response.text}")
                         discard_changes(auth_header)
                 else:
-                    print("Unknown section")
+                    print("[!] Unknown section")
 
 
             elif rule_type == "CHANGE" or rule_type == "change" or rule_type == "chg" or rule_type == "CHG" or rule_type == "Change" or rule_type == "Chg":
-                print("Rule will be changed")
+                #print("Rule will be changed")
                 rule_id = str(row[4])
                 rule_id = str(rule_id.replace("\n", ""))
                 rule_id = str(rule_id.replace(" ", ""))
                 if rule_id:
-                    print(rule_id)
+                    print(f"[*] Rule will be changed: {rule_id}")
                     rule_uid = get_rule_id(auth_header, rule_id)
                     if rule_uid:
-                        print(rule_uid)
+                        #print(rule_uid)
 
                         #check source changes
                         sources = []
@@ -756,7 +768,7 @@ def create_change_rules(auth_header, data, session_name):
                                 source1 = str(source1.replace("NaN", ""))
                                 source1 = str(source1.replace("nan", ""))
                         sources = list(filter(None, sources))
-                        print(sources)
+                        #print(sources)
                         add_sources = []
                         del_sources = []
                         if sources:
@@ -773,8 +785,8 @@ def create_change_rules(auth_header, data, session_name):
                                         del_sources.append(source)
                                     else:
                                         print(f"No action set, nothing happens with {source}")                 
-                            print(f"{add_sources} will be added to rule...")
-                            print(f"{del_sources} will be removed from rule...")
+                            print(f"[*] {add_sources} will be added to rule (source)...")
+                            print(f"[*] {del_sources} will be removed from rule (source)...")
                             layer = "Network"
                             if add_sources:
                                 payload = {
@@ -788,9 +800,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully added sources to rule")
+                                    print("[+] Successfully added sources to rule")
                                 else:
-                                    print(f"Error adding source to rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error adding source to rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
                             if del_sources:
                                 payload = {
@@ -804,9 +816,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully removed sources from rule")
+                                    print("[+] Successfully removed sources from rule")
                                 else:
-                                    print(f"Error removing sources from rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error removing sources from rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
 
                         #check destination changes
@@ -820,7 +832,7 @@ def create_change_rules(auth_header, data, session_name):
                                 destination1 = str(destination1.replace("NaN", ""))
                                 destination1 = str(destination1.replace("nan", ""))
                         destinations = list(filter(None, destinations))
-                        print(destinations)
+                        #print(destinations)
                         add_destinations = []
                         del_destinations = []
                         if destinations:
@@ -836,9 +848,9 @@ def create_change_rules(auth_header, data, session_name):
                                     elif action == "delete":
                                         del_destinations.append(destination)
                                     else:
-                                        print(f"No action set, nothing happens with {destination}")                 
-                            print(f"{add_destinations} will be added to rule...")
-                            print(f"{del_destinations} will be removed from rule...")
+                                        print(f"[*] No action set, nothing happens with {destination}")                 
+                            print(f"[*] {add_destinations} will be added to rule...")
+                            print(f"[*] {del_destinations} will be removed from rule...")
                             layer = "Network"
                             if add_destinations:
                                 payload = {
@@ -852,9 +864,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully added destinations to rule")
+                                    print("[+] Successfully added destinations to rule")
                                 else:
-                                    print(f"Error adding destination to rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error adding destination to rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
                             if del_destinations:
                                 payload = {
@@ -868,9 +880,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully removed destinations from rule")
+                                    print("[+] Successfully removed destinations from rule")
                                 else:
-                                    print(f"Error removing destinations from rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error removing destinations from rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
 
                         # check install on changes
@@ -884,7 +896,7 @@ def create_change_rules(auth_header, data, session_name):
                                 install_on1 = str(install_on1.replace("NaN", ""))
                                 install_on1 = str(install_on1.replace("nan", ""))
                         install_on = list(filter(None, install_on))
-                        print(install_on)
+                        #print(install_on)
                         add_install_on = []
                         del_install_on = []
                         if install_on:
@@ -900,9 +912,9 @@ def create_change_rules(auth_header, data, session_name):
                                     elif action == "delete":
                                         del_install_on.append(obj)
                                     else:
-                                        print(f"No action set, nothing happens with {obj}")                 
-                            print(f"{add_install_on} will be added to rule...")
-                            print(f"{del_install_on} will be removed from rule...")
+                                        print(f"[*] No action set, nothing happens with {obj}")                 
+                            print(f"[*] {add_install_on} will be added to rule...")
+                            print(f"[*] {del_install_on} will be removed from rule...")
                             layer = "Network"
                             if add_install_on:
                                 payload = {
@@ -916,9 +928,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully added installation gateways to rule")
+                                    print("[+] Successfully added installation gateways to rule")
                                 else:
-                                    print(f"Error adding installation gateways to rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error adding installation gateways to rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
                             if del_install_on:
                                 payload = {
@@ -932,9 +944,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully removed installation gateway from rule")
+                                    print("[+] Successfully removed installation gateway from rule")
                                 else:
-                                    print(f"Error removing installation gateway from rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error removing installation gateway from rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
 
                         # check service changes
@@ -948,7 +960,7 @@ def create_change_rules(auth_header, data, session_name):
                                 service1 = str(service1.replace("NaN", ""))
                                 service1 = str(service1.replace("nan", ""))
                         services = list(filter(None, services))
-                        print(services)
+                        #print(services)
                         add_services = []
                         del_services = []
                         if services:
@@ -964,9 +976,9 @@ def create_change_rules(auth_header, data, session_name):
                                     elif action == "delete":
                                         del_services.append(obj)
                                     else:
-                                        print(f"No action set, nothing happens with {obj}")                 
-                            print(f"{add_services} will be added to rule...")
-                            print(f"{del_services} will be removed from rule...")
+                                        print(f"[*] No action set, nothing happens with {obj}")                 
+                            print(f"[*] {add_services} will be added to rule...")
+                            print(f"[*] {del_services} will be removed from rule...")
                             layer = "Network"
                             if add_services:
                                 payload = {
@@ -980,9 +992,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully added services to rule")
+                                    print("[+] Successfully added services to rule")
                                 else:
-                                    print(f"Error adding services to rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error adding services to rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
                             if del_services:
                                 payload = {
@@ -996,9 +1008,9 @@ def create_change_rules(auth_header, data, session_name):
                                 response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                                 # Check the response
                                 if response.status_code == 200:
-                                    print("Successfully removed services from rule")
+                                    print("[+] Successfully removed services from rule")
                                 else:
-                                    print(f"Error removing services from rule: {response.status_code} {response.text}")
+                                    print(f"[!] Error removing services from rule: {response.status_code} {response.text}")
                                     discard_changes(auth_header)
 
 
@@ -1015,23 +1027,23 @@ def create_change_rules(auth_header, data, session_name):
                             response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                             # Check the response
                             if response.status_code == 200:
-                                print("Successfully changed description")
+                                print("[+] Successfully changed description")
                             else:
-                                print(f"Error adding description: {response.status_code} {response.text}")
+                                print(f"[!] Error adding description: {response.status_code} {response.text}")
                                 discard_changes(auth_header)
 
 
                         
                     else:
-                        print("Unknown rule uid")
+                        print("[!] Unknown rule uid")
             elif rule_type == "DELETE" or rule_type == "delete" or rule_type =="DEL" or rule_type == "del" or rule_type == "Delete" or rule_type == "Del":
                 rule_id = str(row[4])
                 rule_id = str(rule_id.replace("\n", ""))
                 rule_id = str(rule_id.replace(" ", ""))
                 if rule_id:
-                    print(rule_id)
+                    #print(rule_id)
                     rule_uid = get_rule_id(auth_header, rule_id)
-                    print(rule_uid)
+                    print(f"[*] Deleting rule: {rule_uid}")
                     if rule_uid:
                         layer = "Network"
                         payload = {
@@ -1042,13 +1054,13 @@ def create_change_rules(auth_header, data, session_name):
                         response = requests.post(url, headers=auth_header, data=json.dumps(payload), verify=False)
                         # Check the response
                         if response.status_code == 200:
-                            print("Rule deleted successfully")
+                            print("[+] Rule deleted successfully")
                         else:
-                            print(f"Error deleting rule: {response.status_code} {response.text}")
+                            print(f"[!] Error deleting rule: {response.status_code} {response.text}")
                             discard_changes(auth_header)
 
                 else:
-                    print("No Rule_ID has been found!")
+                    print("[!] No Rule_ID has been found!")
 
 
 
@@ -1057,7 +1069,7 @@ def change_session_information(auth_header):
     today_str = today.strftime("%d.%m.%Y")
     session_id = auth_header['X-chkp-sid']
     new_name = f"api_user@{today_str}"
-    new_description = input("Bitte die Beschreibung für den Publish eingeben: ")
+    new_description = input("[*] Please enter a description for the session: ")
     payload = {
         "new-name": new_name,
         "description": new_description
@@ -1066,24 +1078,24 @@ def change_session_information(auth_header):
     url = f"https://{mgmt_ip}/web_api/set-session"
     response = requests.post(url, data=data, headers=auth_header, verify=False)
     if response.status_code == 200:
-        print("Session wurde umbenannt")
+        print("[+] Session has been renamed")
         return new_description
     else:
-        print(f"Fehler beim updaten der Session: {response.text}")
+        print(f"[!] Error renaming session: {response.text}")
         discard_changes(auth_header)
 
 
 def discard_changes(auth_header):
-    print("Error - discarding changes...")
+    print("[!] Error - discarding changes...")
     url = f"https://{mgmt_ip}/web_api/discard"
     discard = {}
     data = json.dumps(discard)
     response = requests.post(url, data=data, headers=auth_header, verify=False)
     if response.status_code != 200:
-        print(f"Discarding changes failed with error: {response.text}")
+        print(f"[!] Discarding changes failed with error: {response.text}")
         sys.exit()
     else:
-        print("Changes discarded successfully.")
+        print("[+] Changes discarded successfully.")
         sys.exit()
 
 def publish_changes(auth_header):
@@ -1092,10 +1104,10 @@ def publish_changes(auth_header):
     data = json.dumps(publish)
     response = requests.post(url, data=data, headers=auth_header, verify=False)
     if response.status_code != 200:
-        print(f"Publishing changes failed with error: {response.text}")
+        print(f"[!] Publishing changes failed with error: {response.text}")
         discard_changes(auth_header)
     else:
-        print("Changes published successfully.")
+        print("[+] Changes published successfully.")
 
 def get_session_id(auth_header):
     url = f"https://{mgmt_ip}/web_api/show-session"
@@ -1115,10 +1127,10 @@ def submit_session(auth_header):
     data = json.dumps(payload)
     response = requests.post(url, data=data, headers=auth_header, verify=False)
     if response.status_code != 200:
-        print(f"Submitting changes failed with error: {response.text}")
+        print(f"[!] Submitting changes failed with error: {response.text}")
         discard_changes(auth_header)
     else:
-        print("Changes submitted successfully.")
+        print("[+] Changes submitted successfully.")
 
 
 def disconnect_session(auth_header):
@@ -1130,14 +1142,15 @@ def disconnect_session(auth_header):
     data = json.dumps(payload)
     response = requests.post(url, data=data, headers=auth_header, verify=False)
     if response.status_code != 200:
-        print(f"Disconnecting the session failed: {response.text}")
+        print(f"[!] Disconnecting the session failed: {response.text}")
     else:
-        print("Session successfully disconnected.")
+        print("[+] Session successfully disconnected.")
 
 
 
 
 def main():
+    print_banner()
     # Verbindung zur Check Point API herstellen
     auth_header = connect_checkpoint_api()
     
@@ -1147,7 +1160,7 @@ def main():
     # Extrahiere die Daten aus der Excel-Datei
     data = extract_data(excel_file)
 
-    print(data)
+    print(f"[*] Data: {data}")
 
     if auth_header is not None:
         # Name der Session ändern
@@ -1163,7 +1176,7 @@ def main():
         # Anlegen der Objekte
         for obj in new_objects:
             obj = str(obj.replace("\n", ""))
-            print(f"Object does not exist: {obj}")
+            print(f"[*] Object does not exist: {obj}")
             create_object(auth_header, obj)
 
         # Service-Objekte extrahieren
@@ -1175,7 +1188,7 @@ def main():
         #Anlage der Service Objekte
         for obj in new_services:
             obj = str(obj.replace("\n", ""))
-            print(f"Object does not exist: {obj}")
+            print(f"[*] Object does not exist: {obj}")
             create_service(auth_header, obj)
 
         #Anlegen der Regeln
@@ -1187,7 +1200,7 @@ def main():
 
         #Submit Session
         submit_session(auth_header)
-        print("Waiting for Publish to finish...")
+        print("[*] Waiting for Publish to finish...")
         time.sleep(10)
 
         disconnect_session(auth_header)
