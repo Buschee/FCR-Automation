@@ -1,8 +1,8 @@
 # FCR-Automation
-Python script to automate firewall changes on a Checkpoint management
+Python script to automate firewall changes on a Checkpoint management.
 
 # ToDo
-- [ ] optimize the service process
+- [x] optimize the service process
 - [x] support different Excel file types
 - [ ] support different Excel templates
 - [ ] check creation of access role objects on the cloned R81.20 management
