@@ -1205,16 +1205,6 @@ def main():
         time.sleep(10)
 
         disconnect_session(auth_header)
-
-
-        #to-do!!!!!
-        #Optimierung von Services
-        #Optimierung verschiedener Excel Formate
-        #check der access role objekte am geclonten management auf r81.20
-        #check der VPN access role objekte am geclonten management auf r81.20
-        #time objekte hinzufügen
-        #andere Policies supporten
-        #VPN Rules supporten
         
 if __name__ == "__main__":
     main()
