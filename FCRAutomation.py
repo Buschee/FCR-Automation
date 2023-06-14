@@ -15,6 +15,7 @@ import time
 
 #Global parameter
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+#IP of the management server
 mgmt_ip = "X.X.X.X"
 
 
