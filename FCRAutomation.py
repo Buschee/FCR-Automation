@@ -15,7 +15,7 @@ import time
 
 #Global parameter
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-mgmt_ip = "192.168.1.1"
+mgmt_ip = "X.X.X.X"
 
 
 def print_banner():
