@@ -15,8 +15,9 @@ import time
 
 #Global parameter
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-#IP of the Checkpoint management server
-mgmt_ip = "X.X.X.X"
+#test mgmt
+#mgmt_ip = "192.168.1.1"
+mgmt_ip = "213.33.120.99"
 
 
 def print_banner():
@@ -29,7 +30,6 @@ def print_banner():
  -----------------------------------------------------------------------------------------------
                                                                             """)
    
-
 
 def select_excel_file():
     """
@@ -62,7 +62,6 @@ def extract_data(excel_file):
         print("[!] ID-row not found")
         return None
 
-
 def connect_checkpoint_api():
     """
     Stellt eine Verbindung zur Check Point API her und gibt die
@@ -73,7 +72,7 @@ def connect_checkpoint_api():
 
     # Verbindung zur Check Point API herstellen
     url = f"https://{mgmt_ip}/web_api/login"
-    payload = {'user': 'api_user', 'password': api_password}
+    payload = {'user': 'fcr-user', 'password': api_password}
     response = requests.post(url, json=payload, verify=False)
     if response.status_code == 200:
         # Authentifizierungs-Header zurückgeben
@@ -1205,6 +1204,16 @@ def main():
         time.sleep(10)
 
         disconnect_session(auth_header)
+
+
+        #to-do!!!!!
+        #Optimierung von Services
+        #Optimierung verschiedener Excel Formate
+        #check der access role objekte am geclonten management auf r81.20
+        #check der VPN access role objekte am geclonten management auf r81.20
+        #time objekte hinzufügen
+        #andere Policies supporten
+        #VPN Rules supporten
         
 if __name__ == "__main__":
     main()
