@@ -442,7 +442,7 @@ def create_object(auth_header, name):
         response_json = json.loads(response.text)
         if response.status_code != 200:
             print(f"[!] {response_json}")
-            discard_changes(auth_header)
+            #discard_changes(auth_header)
 
     # create network object
     elif name.startswith("n"):
@@ -550,7 +550,6 @@ def create_service(auth_header, name):
         response_json = json.loads(response.text)
         if response.status_code != 200:
             print(f"[!] {response_json}")
-            discard_changes(auth_header)
     
     elif "udp" in name:
         # creating udp service
@@ -591,7 +590,7 @@ def get_rule_position(section_name, auth_header):
         print(f"[*] Section name: {section_name}")
     else:
         print(f"[*] Section name: {section_name}")
-    layer = "Network"
+    layer = "Standard Network"
     payload = {
         "name": section_name,
         "layer": layer
@@ -616,7 +615,7 @@ def get_rule_name(section_name, section_id, auth_header):
 
 def get_rule_id(auth_header, rule_name):
     print(f"[*] Searching for rule: {rule_name}")
-    layer = "Network"
+    layer = "Standard Network"
     payload = {
         "name": rule_name,
         "layer": layer
@@ -628,7 +627,7 @@ def get_rule_id(auth_header, rule_name):
     return response_json["uid"]
 
 def get_description(auth_header, rule_uid):
-    layer = "Network"
+    layer = "Standard Network"
     payload = {
         "uid": rule_uid,
         "layer": layer
@@ -721,7 +720,7 @@ def create_change_rules(auth_header, data, session_name):
 
                     url = f"https://{mgmt_ip}/web_api/add-access-rule"
                     data = {
-                        "layer": "Network",
+                        "layer": "Standard Network",
                         "position": {
                             "bottom": section_id
                         },
@@ -787,7 +786,7 @@ def create_change_rules(auth_header, data, session_name):
                                         print(f"No action set, nothing happens with {source}")                 
                             print(f"[*] {add_sources} will be added to rule (source)...")
                             print(f"[*] {del_sources} will be removed from rule (source)...")
-                            layer = "Network"
+                            layer = "Standard Network"
                             if add_sources:
                                 payload = {
                                     "uid": rule_uid,
@@ -851,7 +850,7 @@ def create_change_rules(auth_header, data, session_name):
                                         print(f"[*] No action set, nothing happens with {destination}")                 
                             print(f"[*] {add_destinations} will be added to rule...")
                             print(f"[*] {del_destinations} will be removed from rule...")
-                            layer = "Network"
+                            layer = "Standard Network"
                             if add_destinations:
                                 payload = {
                                     "uid": rule_uid,
@@ -915,7 +914,7 @@ def create_change_rules(auth_header, data, session_name):
                                         print(f"[*] No action set, nothing happens with {obj}")                 
                             print(f"[*] {add_install_on} will be added to rule...")
                             print(f"[*] {del_install_on} will be removed from rule...")
-                            layer = "Network"
+                            layer = "Standard Network"
                             if add_install_on:
                                 payload = {
                                     "uid": rule_uid,
@@ -979,7 +978,7 @@ def create_change_rules(auth_header, data, session_name):
                                         print(f"[*] No action set, nothing happens with {obj}")                 
                             print(f"[*] {add_services} will be added to rule...")
                             print(f"[*] {del_services} will be removed from rule...")
-                            layer = "Network"
+                            layer = "Standard Network"
                             if add_services:
                                 payload = {
                                     "uid": rule_uid,
@@ -1045,7 +1044,7 @@ def create_change_rules(auth_header, data, session_name):
                     rule_uid = get_rule_id(auth_header, rule_id)
                     print(f"[*] Deleting rule: {rule_uid}")
                     if rule_uid:
-                        layer = "Network"
+                        layer = "Standard Network"
                         payload = {
                             "uid": rule_uid,
                             "layer": layer
